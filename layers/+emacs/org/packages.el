@@ -285,6 +285,7 @@ Will work on both org-mode and any mode that accepts plain html."
         "sb" 'org-tree-to-indirect-buffer
         "sd" 'org-cut-subtree
         "sy" 'org-copy-subtree
+        "sp" 'org-paste-subtree
         "sh" 'org-promote-subtree
         "sj" 'org-move-subtree-down
         "sk" 'org-move-subtree-up
@@ -384,9 +385,10 @@ Will work on both org-mode and any mode that accepts plain html."
 
       ;; Add global evil-leader mappings. Used to access org-agenda
       ;; functionalities – and a few others commands – from any other mode.
-      (spacemacs/declare-prefix "ao" "org")
-      (spacemacs/declare-prefix "aof" "feeds")
-      (spacemacs/declare-prefix "aoC" (org-clocks-prefix))
+      (spacemacs/declare-prefix
+        "ao"  "org"
+        "aof" "feeds"
+        "aoC" (org-clocks-prefix))
       ;; org-agenda
       (when (configuration-layer/layer-used-p 'ivy)
         (spacemacs/set-leader-keys "ao/" 'org-occur-in-agenda-files))
@@ -682,12 +684,13 @@ Headline^^            Visit entry^^               Filter^^                    Da
     :defer t
     :init
     (progn
-      (spacemacs/declare-prefix "aoJ" "jira")
-      (spacemacs/declare-prefix "aoJp" "projects")
-      (spacemacs/declare-prefix "aoJi" "issues")
-      (spacemacs/declare-prefix "aoJs" "subtasks")
-      (spacemacs/declare-prefix "aoJc" "comments")
-      (spacemacs/declare-prefix "aoJt" "todos")
+      (spacemacs/declare-prefix
+        "aoJ"  "jira"
+        "aoJp" "projects"
+        "aoJi" "issues"
+        "aoJs" "subtasks"
+        "aoJc" "comments"
+        "aoJt" "todos")
       (spacemacs/set-leader-keys
         "aoJpg" 'org-jira-get-projects
         "aoJib" 'org-jira-browse-issue
@@ -926,9 +929,10 @@ Headline^^            Visit entry^^               Filter^^                    Da
     :hook (after-init . org-roam-setup)
     :init
     (progn
-      (spacemacs/declare-prefix "aor" "org-roam")
-      (spacemacs/declare-prefix "aord" "org-roam-dailies")
-      (spacemacs/declare-prefix "aort" "org-roam-tags")
+      (spacemacs/declare-prefix
+        "aor"  "org-roam"
+        "aord" "org-roam-dailies"
+        "aort" "org-roam-tags")
       (spacemacs/set-leader-keys
         "aordy" 'org-roam-dailies-goto-yesterday
         "aordt" 'org-roam-dailies-goto-today
@@ -1024,16 +1028,17 @@ Headline^^            Visit entry^^               Filter^^                    Da
     :defer t
     :init
     (progn
-      (add-hook 'org-mode-hook 'org-appear-mode)
-      (when (and (eq org-appear-trigger 'manual)
-                 (memq dotspacemacs-editing-style '(vim hybrid)))
-        (add-hook 'org-mode-hook
-                  (lambda ()
-                    (add-hook 'evil-insert-state-entry-hook #'org-appear-manual-start nil t)
-                    (add-hook 'evil-insert-state-exit-hook #'org-appear-manual-stop nil t))))
+      (add-hook 'org-mode-hook 'org-appear-mode)      
       (setq org-appear-autolinks t
             org-appear-autoemphasis t
-            org-appear-autosubmarkers t))))
+            org-appear-autosubmarkers t))
+    :config
+    (when (and (eq org-appear-trigger 'manual)
+               (memq dotspacemacs-editing-style '(vim hybrid)))
+      (add-hook 'org-mode-hook
+                (lambda ()
+                  (add-hook 'evil-insert-state-entry-hook #'org-appear-manual-start nil t)
+                  (add-hook 'evil-insert-state-exit-hook #'org-appear-manual-stop nil t))))))
 
 (defun org/init-ox-asciidoc ()
   (use-package ox-asciidoc
